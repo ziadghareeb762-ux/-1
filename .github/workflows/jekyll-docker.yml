@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Over the Garden Wall - تعلم الإنجليزية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #bb86fc;
+            --secondary-color: #03dac6;
+            --background-dark: #121212;
+            --surface-dark: #1e1e1e;
+            --text-light: #e0e0e0;
+            --correct-answer-color: #4CAF50;
+            --incorrect-answer-color: #F44336;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: var(--surface-dark);
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* إضافة التمرير التلقائي */
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.1em;
+            text-align: justify;
+            margin-bottom: 1em;
+            direction: rtl;
+        }
+
+        .story-text span {
+            cursor: pointer;
+            border-bottom: 1px dashed var(--primary-color);
+            transition: color 0.2s ease, border-bottom-color 0.2s ease;
+            position: relative;
+            display: inline-block; /* لتمكين التموضع النسبي */
+        }
+
+        .story-text span:hover {
+            color: var(--secondary-color);
+            border-bottom-color: var(--secondary-color);
+        }
+
+        .translation-tooltip {
+            background-color: var(--surface-dark);
+            border: 1px solid var(--primary-color);
+            padding: 8px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1000;
+            top: 100%;
+            right: 0;
+            white-space: nowrap;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            text-align: center;
+            direction: rtl;
+        }
+
+        .translation-tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            right: 10px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent var(--primary-color) transparent;
+        }
+
+        .btn {
+            display: block;
+            width: 180px;
+            margin: 25px auto;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--background-dark);
+            text-align: center;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-size: 1.05em;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .quiz-option {
+            background-color: #2a2a2a;
+            border: 1px solid #424242;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            font-size: 1.05em;
+            color: var(--text-light);
+        }
+
+        .quiz-option:hover {
+            background-color: #3e3e3e;
+            border-color: var(--secondary-color);
+        }
+
+        .quiz-option.correct {
+            background-color: var(--correct-answer-color);
+            color: white;
+            border-color: var(--correct-answer-color);
+        }
+
+        .quiz-option.incorrect {
+            background-color: var(--incorrect-answer-color);
+            color: white;
+            border-color: var(--incorrect-answer-color);
+        }
+
+        .quiz-feedback {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: var(--text-light);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .summary-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .summary-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #424242;
+            font-size: 1.05em;
+        }
+
+        .summary-list li:last-child {
+            border-bottom: none;
+        }
+
+        .quiz-section {
+            border-top: 1px solid #3e3e3e;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .container { padding: 15px; box-shadow: none; border-radius: 0; }
+            h1 { font-size: 1.8em; margin-bottom: 15px; }
+            p, .quiz-option, .summary-list li { font-size: 1em; }
+            .btn { width: 100%; margin: 20px auto; padding: 15px; font-size: 1.1em; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.5em; }
+            p { font-size: 0.95em; }
+            .btn { font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="story-page">
+        <h1 id="chapter-title">Over the Garden Wall - الفصل 1</h1>
+        <div id="story-text" class="story-text"></div>
+        <button id="next-summary-btn" class="btn hidden">التالي</button>
+    </div>
+
+    <div id="summary-page" class="hidden">
+        <h1>الكلمات المترجمة</h1>
+        <p>لقد قمت بترجمة <span id="translated-count">0</span> كلمة.</p>
+        <ul id="summary-list" class="summary-list"></ul>
+        <button id="next-quiz-btn" class="btn hidden">ابدأ اختبار الكلمات</button>
+        <button id="next-comprehension-quiz-btn" class="btn hidden">ابدأ اختبار الفهم</button>
+    </div>
+
+    <div id="quiz-page" class="hidden">
+        <h1>اختبار الكلمات</h1>
+        <p>اختر الترجمة الصحيحة للكلمة:</p>
+        <div id="quiz-question-box"></div>
+        <div id="quiz-feedback" class="quiz-feedback"></div>
+        <button id="next-page-btn" class="btn hidden">التالي</button>
+    </div>
+
+    <div id="comprehension-quiz-page" class="hidden">
+        <h1>اختبار فهم الفصل</h1>
+        <p>أجب عن الأسئلة التالية بناءً على أحداث القصة:</p>
+        <div id="comprehension-quiz-question-box"></div>
+        <div id="comprehension-quiz-feedback" class="quiz-feedback"></div>
+        <button id="restart-btn" class="btn hidden">ابدأ من جديد</button>
+    </div>
+</div>
+
+<script>
+    const chapterText = `
+    Wirt and Greg are brothers. One day, they suddenly wake up in a very strange forest. The forest is dark, and the air is cold. Big trees grow close together, and strange sounds come from the wind. Wirt looks around with fear in his eyes. Greg, however, does not feel afraid. He smiles and sings a silly song.
+
+    Wirt is the older brother. He is serious, shy, and always worried. He thinks too much and is afraid of making mistakes. Greg is the younger brother. He is happy, playful, and full of strange ideas. He carries a little frog in his pocket. The frog does not have a name, so Greg gives it a new name every few minutes. As the brothers walk, they feel lost. Wirt says, “We don’t know where we are. How can we go home?” Greg laughs and answers, “Don’t worry, Wirt. This is an adventure!”
+
+    Suddenly, they hear a strange voice. A small bluebird flies near them. The bird can talk! Her name is Beatrice. She says, “You boys look lost. Maybe I can help you.” Wirt is surprised and does not trust her. He says, “Birds do not talk. This is not normal.” Greg, however, is excited. He says, “Cool! A talking bird! Let’s be friends.”
+
+    Beatrice tells them that the forest is dangerous. There is a terrible creature living there. His name is The Beast. She says, “If you are not careful, the Beast will find you.” Wirt feels afraid again, but Greg only laughs. Later, they meet an old man. He is tall, with a long beard and sad eyes. He carries a big lantern and an axe. The man is called The Woodsman. He lives in the forest and cuts down trees. He tells Wirt and Greg, “Children should not walk here. The Beast is always near. He looks for lost souls.” Wirt’s heart beats fast. He imagines the Beast hiding behind the trees. He thinks about home, about safety, and about how lost they are. But Greg is different. He plays with his frog and sings a silly rhyme. He even tries to make the Woodsman smile. The Woodsman explains that he cuts trees to make oil for his lantern. The light is important, because it keeps away the darkness. Wirt does not understand, but he feels the Woodsman is hiding something. When the night comes, the forest becomes even darker. The brothers walk slowly. The wind moves the branches, and strange shadows appear. Wirt says, “Greg, be quiet. We don’t know what is out there.” But Greg answers, “Don’t worry, Wirt. I will protect you with my frog!”
+
+    The brothers argue a little. Wirt thinks Greg is not serious enough. Greg thinks Wirt is too serious and always afraid. But deep inside, they both love each other.
+
+    Suddenly, they hear a sound in the forest. A dark shape moves between the trees. Wirt whispers, “Is that the Beast?” Greg runs forward and says, “Hello?” But it is only a small animal. Wirt feels angry and says, “Greg, stop running! This place is dangerous!” Later, the Woodsman appears again. His lantern shines in the dark. He warns them once more: “The Beast is watching you. Do not lose hope. If you give up, the Beast will take your soul.” Wirt shivers, and Greg stays quiet for the first time. At the end of the episode, the brothers continue walking through the forest. Wirt looks tired, but Greg still tries to stay positive. Beatrice flies above them, leading the way. The night is long, and the forest is full of secrets. They do not know how to escape, but they promise to stay together. The story of their journey has only just begun.
+    `;
+
+    const wordTranslations = {
+        "wirt": "ويرت", "greg": "غريغ", "are": "هما", "brothers": "أخوان", "one": "واحد", "day": "يوم",
+        "they": "هم", "suddenly": "فجأة", "wake": "يستيقظون", "up": "استيقاظ", "in": "في", "a": "أداة تنكير",
+        "very": "جداً", "strange": "غريبة", "forest": "غابة", "the": "الـ (أداة تعريف)", "is": "هو/هي",
+        "dark": "مظلمة", "and": "و", "air": "الهواء", "cold": "بارد", "big": "كبيرة", "trees": "أشجار",
+        "grow": "تنمو", "close": "قريبة", "together": "معاً", "sounds": "أصوات", "come": "تأتي", "from": "من",
+        "wind": "الرياح", "looks": "ينظر", "around": "حول", "with": "بـ", "fear": "خوف", "his": "له",
+        "eyes": "عينيه", "however": "على أي حال", "does": "يَـ (للنفي)", "not": "لا", "feel": "يشعرون",
+        "afraid": "بالخوف", "he": "هو", "smiles": "يبتسم", "sings": "يغني", "silly": "مضحكة", "song": "أغنية",
+        "older": "الأكبر", "serious": "جدي", "shy": "خجول", "always": "دائماً", "worried": "قلق",
+        "thinks": "يفكر", "too": "جداً", "much": "كثيراً", "making": "ارتكاب", "mistakes": "أخطاء",
+        "younger": "الأصغر", "happy": "سعيد", "playful": "مرح", "full": "مليء بـ", "ideas": "أفكار",
+        "carries": "يحمل", "little": "صغير", "frog": "ضفدع", "pocket": "جيبه", "has": "يملك", "have": "يمتلك",
+        "name": "اسم", "so": "لذلك", "gives": "يعطيه", "it": "له", "new": "جديد", "every": "كل",
+        "few": "بضع", "minutes": "دقائق", "as": "بينما", "walk": "يمشون", "they": "هم", "lost": "تائهين",
+        "says": "يقول", "don't": "لا", "know": "نعرف", "where": "أين", "we": "نحن", "can": "يمكننا",
+        "go": "نذهب", "home": "للمنزل", "laughs": "يضحك", "answers": "يجيب", "worry": "تقلق",
+        "this": "هذه", "is": "هي", "an": "أداة تنكير", "adventure": "مغامرة", "suddenly": "فجأة",
+        "hear": "يسمعون", "voice": "صوت", "small": "صغيرة", "bluebird": "طائر أزرق", "flies": "تطير",
+        "near": "قرب", "bird": "طائر", "can": "يمكنها", "talk": "تتكلم", "her": "اسمها", "beatrice": "بياتريس",
+        "she": "هي", "says": "تقول", "you": "أنتم", "boys": "أيها الأولاد", "look": "تبدون", "maybe": "ربما", "i": "أنا", "help": "أساعدكم",
+        "surprised": "متفاجئ", "trust": "يثق", "normal": "طبيعي", "excited": "متحمس", "cool": "رائع",
+        "let's": "دعنا نكون", "be": "نكون", "friends": "أصدقاء", "tells": "تخبرهم", "that": "أن", "dangerous": "خطيرة",
+        "there": "يوجد", "a": "أداة تنكير", "terrible": "رهيب", "creature": "مخلوق", "living": "يعيش",
+        "his": "اسمه", "the": "الـ", "beast": "الوحش", "if": "إذا", "are": "كنتم", "not": "لا", "careful": "حذرين",
+        "will": "سوف", "find": "يجدكم", "feels": "يشعر", "only": "فقط", "laughs": "يضحك", "later": "لاحقاً",
+        "they": "هم", "meet": "يقابلون", "old": "عجوز", "man": "رجل", "tall": "طويل", "long": "طويلة", "beard": "لحية",
+        "sad": "حزينة", "carries": "يحمل", "big": "كبير", "lantern": "فانوس", "axe": "فأس", "called": "يُدعى",
+        "woodsman": "الحطاب", "lives": "يعيش", "cuts": "يقطع", "down": "يُسقط", "children": "الأطفال", "should": "يجب",
+        "walk": "يسيروا", "here": "هنا", "always": "دائماً", "near": "بالقرب", "looks": "يبحث", "for": "عن",
+        "lost": "الضائعة", "souls": "الأرواح", "heart": "قلبه", "beats": "ينبض", "fast": "بسرعة", "imagines": "يتخيل",
+        "hiding": "يختبئ", "behind": "خلف", "home": "المنزل", "safety": "الأمان", "how": "مدى", "are": "هم",
+        "different": "مختلف", "plays": "يلعب", "his": "بـ", "frog": "ضفدعه", "sings": "يغني", "silly": "مضحكة",
+        "rhyme": "قافيه", "even": "حتى", "tries": "يحاول", "make": "يجعل", "smile": "يبتسم", "explains": "يشرح",
+        "oil": "زيت", "important": "مهم", "because": "لأنه", "keeps": "يبعد", "away": "بعيداً", "darkness": "الظلام",
+        "does": "يَـ (للنفي)", "understand": "يفهم", "hiding": "يخفي", "something": "شيئاً", "when": "عندما",
+        "comes": "يأتي", "night": "الليل", "becomes": "يصبح", "even": "حتى", "darker": "أكثر ظلمة",
+        "slowly": "ببطء", "wind": "الرياح", "moves": "تحرك", "branches": "الفروع", "shadows": "ظلال",
+        "appear": "تظهر", "quiet": "هادئ", "don't": "لا", "know": "نعرف", "what": "ماذا", "out": "في الخارج",
+        "there": "هناك", "answers": "يجيب", "will": "سوف", "protect": "أحميك", "with": "بـ", "my": "ضفدعي",
+        "argue": "يتشاجران", "a": "(أداة تنكير)", "little": "قليلاً", "serious": "جاد", "enough": "بما يكفي",
+        "too": "جداً", "deep": "عميق", "inside": "بداخلهم", "both": "كلاهما", "love": "يحبان",
+        "each": "بعضهما", "other": "الآخر", "sound": "صوت", "shape": "شكل", "moves": "يتحرك",
+        "between": "بين", "whispers": "يهمس", "hello": "مرحباً", "only": "فقط", "animal": "حيوان",
+        "angry": "غاضب", "stop": "توقف", "running": "الركض", "place": "المكان", "dangerous": "خطير",
+        "later": "لاحقاً", "appears": "يظهر", "again": "مرة أخرى", "shines": "يلمع", "warns": "يحذرهم",
+        "once": "مرة", "more": "أخرى", "watching": "يراقبكم", "do": "تفقدوا", "lose": "تفقدوا",
+        "hope": "الأمل", "if": "إذا", "give": "تستسلموا", "up": "تستسلموا", "take": "يأخذ",
+        "soul": "روحكم", "shivers": "يرتجف", "stays": "يبقى", "for": "لـ", "first": "أول", "time": "مرة",
+        "at": "في", "end": "نهاية", "episode": "الحلقة", "continue": "يواصلون", "walking": "السير",
+        "through": "خلال", "looks": "يبدو", "tired": "متعب", "still": "لا يزال", "tries": "يحاول",
+        "positive": "إيجابي", "flies": "تطير", "above": "فوق", "leading": "تقود", "the": "الـ", "way": "الطريق",
+        "night": "الليل", "long": "طويلة", "full": "مليئة", "secrets": "أسرار", "do": "يفعلون", "know": "يعرفون",
+        "how": "كيف", "escape": "يهربوا", "but": "لكن", "promise": "يعدون", "stay": "يبقون", "story": "قصة",
+        "journey": "رحلتهم", "has": "قد", "just": "توّاً", "begun": "بدأت"
+    };
+
+
+    const comprehensionQuestions = [
+        {
+            question: "من هم الشخصيات الرئيسية التي قابلها الأخوان في الغابة؟",
+            options: ["الحطاب وبياتريس", "الوحش والحطاب", "المعلمة والضفدع"],
+            answer: "الحطاب وبياتريس"
+        },
+        {
+            question: "ما هي مشاعر ويرت تجاه الغابة والمغامرة؟",
+            options: ["سعيد ومتحمس", "متفائل ومرح", "قلق وخائف"],
+            answer: "قلق وخائف"
+        },
+        {
+            question: "لماذا يحذر الحطاب الأخوان من الوحش؟",
+            options: ["لأن الوحش يسرق الطعام", "لأن الوحش يبحث عن الأرواح الضائعة", "لأن الوحش يقطع الأشجار"],
+            answer: "لأن الوحش يبحث عن الأرواح الضائعة"
+        }
+    ];
+
+    let translatedWords = new Set();
+    let quizWords = [];
+    let currentQuizIndex = 0;
+    let currentComprehensionIndex = 0;
+
+    const storyPage = document.getElementById('story-page');
+    const summaryPage = document.getElementById('summary-page');
+    const quizPage = document.getElementById('quiz-page');
+    const comprehensionQuizPage = document.getElementById('comprehension-quiz-page');
+
+    const nextStoryBtn = document.getElementById('next-summary-btn');
+    const nextQuizBtn = document.getElementById('next-quiz-btn');
+    const nextComprehensionQuizBtn = document.getElementById('next-comprehension-quiz-btn');
+    const nextPageBtn = document.getElementById('next-page-btn');
+    const restartBtn = document.getElementById('restart-btn');
+
+    const translatedCountSpan = document.getElementById('translated-count');
+    const summaryList = document.getElementById('summary-list');
+    const storyTextDiv = document.getElementById('story-text');
+
+    const quizQuestionBox = document.getElementById('quiz-question-box');
+    const quizFeedbackDiv = document.getElementById('quiz-feedback');
+    const comprehensionQuizQuestionBox = document.getElementById('comprehension-quiz-question-box');
+    const comprehensionQuizFeedbackDiv = document.getElementById('comprehension-quiz-feedback');
+
+    function initStory() {
+        storyTextDiv.innerHTML = '';
+        const paragraphs = chapterText.split('\n\n').map(p => p.trim()).filter(p => p);
+        paragraphs.forEach(pText => {
+            const p = document.createElement('p');
+            p.dir = "ltr";
+            const words = pText.split(' ');
+            p.innerHTML = words.map(word => {
+                const cleanWord = word.replace(/[.,?!:"'()]/g, '').toLowerCase();
+                const hasTranslation = wordTranslations.hasOwnProperty(cleanWord);
+                if (hasTranslation) {
+                    return `<span>${word}<div class="translation-tooltip">${wordTranslations[cleanWord]}</div></span>`;
+                } else {
+                    return word;
+                }
+            }).join(' ');
+            storyTextDiv.appendChild(p);
+        });
+        storyTextDiv.removeEventListener('click', handleStoryClick);
+        storyTextDiv.addEventListener('click', handleStoryClick);
+        nextStoryBtn.classList.remove('hidden');
+    }
+
+    function handleStoryClick(e) {
+        if (e.target.tagName === 'SPAN') {
+            const originalWord = e.target.innerText.replace(/[.,?!:"'()]/g, '').toLowerCase();
+            const tooltip = e.target.querySelector('.translation-tooltip');
+            if (tooltip) {
+                if (tooltip.style.display === 'block') {
+                    tooltip.style.display = 'none';
+                    tooltip.style.opacity = '0';
+                } else {
+                    tooltip.style.display = 'block';
+                    tooltip.style.opacity = '1';
+                }
+                translatedWords.add(originalWord);
+                updateTranslatedCount();
+            }
+        }
+    }
+    
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.story-text span')) {
+            document.querySelectorAll('.translation-tooltip').forEach(tooltip => {
+                tooltip.style.display = 'none';
+                tooltip.style.opacity = '0';
+            });
+        }
+    });
+
+
+    function updateTranslatedCount() {
+        translatedCountSpan.innerText = translatedWords.size;
+    }
+
+    function goToSummaryPage() {
+        storyPage.classList.add('hidden');
+        summaryPage.classList.remove('hidden');
+        nextStoryBtn.classList.add('hidden');
+        document.querySelectorAll('.translation-tooltip').forEach(tooltip => {
+            tooltip.style.display = 'none';
+        });
+
+        if (translatedWords.size > 0) {
+            nextQuizBtn.classList.remove('hidden');
+        } else {
+            nextQuizBtn.classList.add('hidden');
+        }
+        nextComprehensionQuizBtn.classList.remove('hidden');
+        renderSummary();
+    }
+
+    function renderSummary() {
+        summaryList.innerHTML = '';
+        if (translatedWords.size > 0) {
+            translatedWords.forEach(word => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span dir="ltr">${word}</span> <span>${wordTranslations[word]}</span>`;
+                summaryList.appendChild(li);
+            });
+        }
+    }
+
+    function goToQuizPage() {
+        summaryPage.classList.add('hidden');
+        quizPage.classList.remove('hidden');
+        nextQuizBtn.classList.add('hidden');
+        nextComprehensionQuizBtn.classList.add('hidden');
+        startWordQuiz();
+    }
+
+    function goToComprehensionQuizPage() {
+        summaryPage.classList.add('hidden');
+        comprehensionQuizPage.classList.remove('hidden');
+        nextQuizBtn.classList.add('hidden');
+        nextComprehensionQuizBtn.classList.add('hidden');
+        startComprehensionQuiz();
+    }
+
+    function startWordQuiz() {
+        quizWords = Array.from(translatedWords);
+        shuffleArray(quizWords);
+        currentQuizIndex = 0;
+        showWordQuizQuestion();
+    }
+
+    function startComprehensionQuiz() {
+        currentComprehensionIndex = 0;
+        showComprehensionQuizQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function showWordQuizQuestion() {
+        quizFeedbackDiv.innerText = '';
+        if (currentQuizIndex >= quizWords.length) {
+            quizQuestionBox.innerHTML = `<p style="text-align: center;">لقد أكملت اختبار الكلمات! 🎉</p>`;
+            nextPageBtn.classList.remove('hidden');
+            nextPageBtn.innerText = "الانتقال لاختبار الفهم";
+            nextPageBtn.removeEventListener('click', showNextWordQuizQuestion);
+            nextPageBtn.addEventListener('click', () => {
+                quizPage.classList.add('hidden');
+                goToComprehensionQuizPage();
+            });
+            return;
+        }
+
+        const questionWord = quizWords[currentQuizIndex];
+        const correctAnswer = wordTranslations[questionWord];
+        const options = generateQuizOptions(correctAnswer);
+
+        quizQuestionBox.innerHTML = `
+            <p style="text-align: center; font-size: 1.2em;" dir="ltr">**${questionWord}**</p>
+            ${options.map(option => `<div class="quiz-option" data-answer="${option}">${option}</div>`).join('')}
+        `;
+
+        document.querySelectorAll('.quiz-option').forEach(optionDiv => {
+            optionDiv.addEventListener('click', handleWordQuizAnswer);
+        });
+    }
+
+    function generateQuizOptions(correctAnswer) {
+        const allTranslations = Object.values(wordTranslations);
+        const uniqueOptions = new Set();
+        uniqueOptions.add(correctAnswer);
+
+        while (uniqueOptions.size < 4 && uniqueOptions.size < allTranslations.length) {
+            const randomIndex = Math.floor(Math.random() * allTranslations.length);
+            const randomOption = allTranslations[randomIndex];
+            if (randomOption !== correctAnswer) {
+                uniqueOptions.add(randomOption);
+            }
+        }
+
+        const optionsArray = Array.from(uniqueOptions);
+        shuffleArray(optionsArray);
+        return optionsArray;
+    }
+
+    function handleWordQuizAnswer(e) {
+        const selectedOption = e.target;
+        const selectedAnswer = selectedOption.dataset.answer;
+        const correctAnswer = wordTranslations[quizWords[currentQuizIndex]];
+
+        if (selectedAnswer === correctAnswer) {
+            selectedOption.classList.add('correct');
+            quizFeedbackDiv.innerText = 'إجابة صحيحة! ✅';
+        } else {
+            selectedOption.classList.add('incorrect');
+            const correctOption = document.querySelector(`.quiz-option[data-answer="${correctAnswer}"]`);
+            if (correctOption) {
+                correctOption.classList.add('correct');
+            }
+            quizFeedbackDiv.innerText = `إجابة خاطئة. الإجابة الصحيحة هي: ${correctAnswer} ❌`;
+        }
+
+        setTimeout(() => {
+            currentQuizIndex++;
+            showWordQuizQuestion();
+        }, 1500);
+    }
+
+    function showComprehensionQuizQuestion() {
+        comprehensionQuizFeedbackDiv.innerText = '';
+        if (currentComprehensionIndex >= comprehensionQuestions.length) {
+            comprehensionQuizQuestionBox.innerHTML = `<p style="text-align: center;">لقد أكملت اختبار الفهم! 🎉</p>`;
+            restartBtn.classList.remove('hidden');
+            return;
+        }
+
+        const questionData = comprehensionQuestions[currentComprehensionIndex];
+        const options = [...questionData.options];
+        shuffleArray(options);
+
+        comprehensionQuizQuestionBox.innerHTML = `
+            <p style="text-align: center; font-size: 1.2em;">**${questionData.question}**</p>
+            ${options.map(option => `<div class="quiz-option" data-answer="${option}">${option}</div>`).join('')}
+        `;
+
+        document.querySelectorAll('.quiz-option').forEach(optionDiv => {
+            optionDiv.addEventListener('click', handleComprehensionQuizAnswer);
+        });
+    }
+
+    function handleComprehensionQuizAnswer(e) {
+        const selectedOption = e.target;
+        const selectedAnswer = selectedOption.dataset.answer;
+        const correctAnswer = comprehensionQuestions[currentComprehensionIndex].answer;
+
+        if (selectedAnswer === correctAnswer) {
+            selectedOption.classList.add('correct');
+            comprehensionQuizFeedbackDiv.innerText = 'إجابة صحيحة! ✅';
+        } else {
+            selectedOption.classList.add('incorrect');
+            const correctOption = document.querySelector(`.quiz-option[data-answer="${correctAnswer}"]`);
+            if (correctOption) {
+                correctOption.classList.add('correct');
+            }
+            comprehensionQuizFeedbackDiv.innerText = `إجابة خاطئة. الإجابة الصحيحة هي: ${correctAnswer} ❌`;
+        }
+
+        setTimeout(() => {
+            currentComprehensionIndex++;
+            showComprehensionQuizQuestion();
+        }, 1500);
+    }
+
+    function restartApp() {
+        translatedWords.clear();
+        updateTranslatedCount();
+        quizWords = [];
+        currentQuizIndex = 0;
+        currentComprehensionIndex = 0;
+        storyPage.classList.remove('hidden');
+        summaryPage.classList.add('hidden');
+        quizPage.classList.add('hidden');
+        comprehensionQuizPage.classList.add('hidden');
+        restartBtn.classList.add('hidden');
+        nextPageBtn.classList.add('hidden');
+        initStory();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initStory();
+        nextStoryBtn.addEventListener('click', goToSummaryPage);
+        nextQuizBtn.addEventListener('click', goToQuizPage);
+        nextComprehensionQuizBtn.addEventListener('click', goToComprehensionQuizPage);
+        restartBtn.addEventListener('click', restartApp);
+    });
+</script>
+
+</body>
+</html>
